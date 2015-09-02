@@ -23,10 +23,25 @@
         (simple-sine db t f sr)))))
 
 
-(defn comp-test-sines
-  "Returns a list of sine waves for testing compressor filters."
+(defn simple-rect
+  [amplitude t sr]
+  (repeat (count (sample-points t sr)) amplitude))
+
+
+(defn jumping-rect
+  [segments sr]
+  (flatten
+    (for [segment segments]
+      (let [[t amplitude] segment]
+        (simple-rect amplitude t sr)))))
+
+
+(defn comp-test-signals
+  "Returns a list of signals for testing compressor filters."
   [f sr]
   (list
+    ; 3s of an unnatural rectangular signal
+    (jumping-rect [[1.0 0.0] [1.0 1.0] [1.0 -1.0] [2.0 0.0]] sr)
     ; 3s sine wave at 0dB
     (simple-sine 0 3.0 f sr)
     ; 3s sine wave at -6dB
