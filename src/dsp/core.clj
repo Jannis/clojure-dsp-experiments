@@ -13,7 +13,10 @@
   (doseq [samples (comp-test-signals 10 1000)]
     (let [times      (sample-times samples 1000)
           ; limited    (stupid-limiter samples -6.0)
-          compressed (stupid-compressor samples -6.0 2.0)]
+          compressed (stupid-compressor samples
+                                        :threshold -6.0
+                                        :ratio 2.0
+                                        :makeup-gain 2.0)]
       (incanter/view (-> (charts/xy-plot times samples)
                         ;  (charts/add-lines times limited)
                          (charts/add-lines times compressed))

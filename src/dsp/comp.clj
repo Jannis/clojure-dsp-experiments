@@ -52,14 +52,22 @@
 (defn apply-gain-reduction
   [amplitudes overshoot reduction]
   (map apply-sample-gain-reduction amplitudes overshoot reduction))
-  ; (map #(- %1 (* (java.lang.Math/signum %1) %2))
-      ;  amplitudes reduction))
+
+
+(defn apply-makeup-gain
+  [amplitudes gain]
+  (amplifydb gain amplitudes))
 
 
 (defn stupid-compressor
   "A stupid compressor with only threshold and ratio parameters."
-  [samples threshold ratio]
+  [samples & {:keys [threshold ratio makeup-gain]
+              :or   {threshold   0.0
+                     ratio       1.0
+                     makeup-gain 0.0}}]
   (let [level          (stupid-level samples)
         overshoot      (stupid-overshoot level threshold)
-        gain-reduction (stupid-gain-reduction overshoot ratio)]
-    (apply-gain-reduction samples overshoot gain-reduction)))
+        gain-reduction (stupid-gain-reduction overshoot ratio)
+        reduced        (apply-gain-reduction samples overshoot
+                                             gain-reduction)]
+    (apply-makeup-gain reduced makeup-gain)))
