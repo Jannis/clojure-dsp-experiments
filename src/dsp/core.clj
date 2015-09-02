@@ -10,7 +10,7 @@
 
 (defn -main
   [& args]
-  (doseq [samples (comp-test-sines 10 1000)]
+  (doseq [samples (comp-test-signals 10 1000)]
     (let [times      (sample-times samples 1000)
           ; limited    (stupid-limiter samples -6.0)
           compressed (stupid-compressor samples -6.0 2.0)]
