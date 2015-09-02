@@ -1,7 +1,7 @@
 (ns dsp.sine)
 
 
-(defn- sample-points
+(defn sample-points
   "Returns a lazy sequence with as many elements as sample points are
    are required to represent t seconds at a sample rate of sr."
   [t sr]
