@@ -41,22 +41,24 @@
   [f sr]
   (list
     ; 3s of an unnatural rectangular signal
-    (jumping-rect [[1.0 0.0] [1.0 1.0] [1.0 -1.0] [2.0 0.0]] sr)
-    ; 3s sine wave at 0dB
-    (simple-sine 0 3.0 f sr)
-    ; 3s sine wave at -6dB
-    (simple-sine -6.0 3.0 f sr)
-    ; 3s sine wave at -12dB
-    (simple-sine -12.0 3.0 f sr)
-    ; 1s sine wave at -18dB, 1s at -12dB, 1s at -18dB
-    (jumping-sine [[1.0 -18.0] [1.0 -12.0] [1.0 -18.0]] f sr)
-    ; 1s sine wave at -12dB, 1s at -6dB, 1s at -12dB
-    (jumping-sine [[1.0 -12.0] [1.0  -6.0] [1.0 -12.0]] f sr)
-    ; 1s at -6dB, 1s at -3dB, 1s at -6dB
-    (jumping-sine [[1.0  -6.0] [1.0  -3.0] [1.0  -6.0]] f sr)
-    ; 1s at -18dB, 1s at -6dB, 1s at -18dB
-    (jumping-sine [[1.0 -18.0] [1.0  -6.0] [1.0 -18.0]] f sr)
-    ; 1s at -12dB, 1s at -3dB, 1s at -12dB
-    (jumping-sine [[1.0 -12.0] [1.0  -3.0] [1.0 -12.0]] f sr)
-    ; 1s at -6dB, 1s at 0dB, 1s at -6dB
-    (jumping-sine [[1.0  -6.0] [1.0   0.0] [1.0  -6.0]] f sr)))
+    ; (jumping-rect [[1.0 0.0] [1.0 1.0] [1.0 -1.0] [2.0 0.0]] sr)
+    ; 1s of a constantly increasing signal
+    (map #(* (/ 1.0 sr) %1) (range sr))))
+    ; ; 3s sine wave at 0dB
+    ; (simple-sine 0 3.0 f sr)
+    ; ; 3s sine wave at -6dB
+    ; (simple-sine -6.0 3.0 f sr)
+    ; ; 3s sine wave at -12dB
+    ; (simple-sine -12.0 3.0 f sr)
+    ; ; 1s sine wave at -18dB, 1s at -12dB, 1s at -18dB
+    ; (jumping-sine [[1.0 -18.0] [1.0 -12.0] [1.0 -18.0]] f sr)
+    ; ; 1s sine wave at -12dB, 1s at -6dB, 1s at -12dB
+    ; (jumping-sine [[1.0 -12.0] [1.0  -6.0] [1.0 -12.0]] f sr)
+    ; ; 1s at -6dB, 1s at -3dB, 1s at -6dB
+    ; (jumping-sine [[1.0  -6.0] [1.0  -3.0] [1.0  -6.0]] f sr)
+    ; ; 1s at -18dB, 1s at -6dB, 1s at -18dB
+    ; (jumping-sine [[1.0 -18.0] [1.0  -6.0] [1.0 -18.0]] f sr)
+    ; ; 1s at -12dB, 1s at -3dB, 1s at -12dB
+    ; (jumping-sine [[1.0 -12.0] [1.0  -3.0] [1.0 -12.0]] f sr)
+    ; ; 1s at -6dB, 1s at 0dB, 1s at -6dB
+    ; (jumping-sine [[1.0  -6.0] [1.0   0.0] [1.0  -6.0]] f sr)))

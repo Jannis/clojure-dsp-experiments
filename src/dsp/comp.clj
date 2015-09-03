@@ -1,5 +1,6 @@
 (ns dsp.comp
-  (:require [dsp.amp :refer :all]))
+  (:require [dsp.amp :refer :all]
+            [incanter.core :refer :all]))
 
 
 
@@ -71,3 +72,65 @@
         reduced        (apply-gain-reduction samples overshoot
                                              gain-reduction)]
     (apply-makeup-gain reduced makeup-gain)))
+
+
+(defn soft-knee
+  [x x0 x1 p0 p1 m0 m1]
+  (let [width (- x1 x0)
+        t     (/ (- x x0) width)
+        t2    (* t t)
+        t3    (* t t t)
+        _m0   (* m0 width)
+        _m1   (* m1 width)
+        ct0   p0
+        ct1   _m0
+        ct2   ($= -3 * p0 - 2 * _m0 + 3 * p1 - _m1)
+        ct3   ($= 2 * p0 + _m0 - 2 * p1 + _m1)]
+    ($= ct3 * t3 + ct2 * t2 + ct1 * t + ct0)))
+
+
+(defn compress
+  [x threshold ratio]
+  (+ threshold (/ (- x threshold) ratio)))
+
+
+(defn compress-with-knee
+  [x threshold ratio knee]
+  (let [knee-min  (- threshold (/ knee 2.0))
+        knee-max  (+ threshold (/ knee 2.0))
+        knee-stop (compress knee-max threshold ratio)
+        sign      (java.lang.Math/signum x)
+        level     (java.lang.Math/abs x)]
+    (cond (<= x knee-min) x
+          (>  x knee-max) (compress x threshold ratio)
+          :else           (soft-knee x knee-min knee-max
+                                       knee-min knee-stop
+                                       1.0 (/ ratio)))))
+
+
+(defn soft-knee-compressor-curve
+  [& {:keys [threshold ratio knee]
+      :or   {threshold 0.0
+             ratio     1.0
+             knee      0.0}}]
+  (let [r   (max 1.0 ratio)
+        k   (max 0.0 knee)
+        t   (min 0.0 threshold)
+        in  (map #(- (* %1 (/ 64 1000)) 64.0) (range 1000))
+        out (map #(compress-with-knee %1 t r k) in)]
+    (list in out)))
+
+
+(defn soft-knee-compressor
+  "A slightly more advanced, yet still stupid compressor with
+   soft-knee support."
+  [samples & {:keys [threshold ratio makeup-gain knee]
+              :or   {threshold    0.0
+                     ratio        1.0
+                     makeup-gain  0.0
+                     knee         0.0}}]
+  (let [r (max 1.0 ratio)
+        k (max 0.0 knee)
+        t (min 0.0 threshold)]
+    (for [x samples]
+      (compress-with-knee x t r k))))
