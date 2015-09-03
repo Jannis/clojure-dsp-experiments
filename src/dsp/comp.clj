@@ -98,9 +98,7 @@
   [x threshold ratio knee]
   (let [knee-min  (- threshold (/ knee 2.0))
         knee-max  (+ threshold (/ knee 2.0))
-        knee-stop (compress knee-max threshold ratio)
-        sign      (java.lang.Math/signum x)
-        level     (java.lang.Math/abs x)]
+        knee-stop (compress knee-max threshold ratio)]
     (cond (<= x knee-min) x
           (>  x knee-max) (compress x threshold ratio)
           :else           (soft-knee x knee-min knee-max
@@ -133,4 +131,6 @@
         k (max 0.0 knee)
         t (min 0.0 threshold)]
     (for [x samples]
-      (compress-with-knee x t r k))))
+      (let [sign  (java.lang.Math/signum x)
+            level (java.lang.Math/abs x)]
+        (* sign (db2amp (compress-with-knee (amp2db level) t r k)))))))
