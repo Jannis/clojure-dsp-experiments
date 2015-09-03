@@ -38,13 +38,16 @@
             compressed2 (soft-knee-compressor samples
                                               :threshold -6.0
                                               :ratio      6.0
-                                              :knee      12.0)]
+                                              :knee      12.0)
+            rms          (rms-envelope samples 100)]
         (incanter/view (-> (charts/xy-plot times samples
                                            :title "Compressed Test Signal (Threshold: -6dB)"
                                            :x-label "Time"
                                            :y-label "Amplitude"
                                            :legend true
                                            :series-label "Original Signal")
+                            (charts/add-lines times rms
+                                              :series-label "RMS")
                             (charts/add-lines times compressed1
                                               :series-label "Ratio 6:1, Knee 0dB")
                             (charts/add-lines times compressed2
